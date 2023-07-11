@@ -60,32 +60,54 @@ router.get("/find/:id", async (req, res) => {
 router.get("/", async (req, res) => {
   const qNew = req.query.new;
   const qCategory = req.query.category;
-  
+  const page = parseInt(req.query.page) || 1; // Current page number
+  const limit = parseInt(req.query.limit) || 10; // Number of items per page
+
   try {
     let products;
+    let totalCount;
 
     if (qNew) {
       products = await Product.find().sort({ createdAt: -1 }).limit(1);
+      totalCount = 1; // Since we are limiting to 1 item, the total count is 1
     } else if (qCategory) {
       products = await Product.find({
         category: {
           $in: [qCategory],
         },
-      });
+      })
+        .skip((page - 1) * limit) // Calculate the number of items to skip based on the page number and limit
+        .limit(limit);
+      totalCount = await Product.countDocuments({
+        category: {
+          $in: [qCategory],
+        },
+      }); // Get the total count of items in the specified category
     } else {
-      products = await Product.find();
+      products = await Product.find()
+        .skip((page - 1) * limit)
+        .limit(limit);
+      totalCount = await Product.countDocuments(); // Get the total count of all items
     }
 
-    res.status(200).json(products);
+    const totalPages = Math.ceil(totalCount / limit); // Calculate the total number of pages
+
+    res.status(200).json({
+      products,
+      totalPages,
+      currentPage: page,
+      totalCount,
+    });
   } catch (err) {
     res.status(500).json(err);
   }
 });
 
+
 router.get("/cart/:ids", async (req, res) => {
   const ids = req.params.ids.split(',');
   try {
-    const products = await Product.find({ id: { $in: ids } });
+    const products = await Product.find({ _id: { $in: ids } });
     res.status(200).json(products);
   } catch (err) {
     res.status(500).json(err);
