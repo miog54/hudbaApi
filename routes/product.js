@@ -21,7 +21,7 @@ router.post("/", async (req, res) => {
 });
 
 //UPDATE
-router.put("/:id", verifyTokenAndAdmin, async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     const updatedProduct = await Product.findByIdAndUpdate(
       req.params.id,
@@ -37,7 +37,7 @@ router.put("/:id", verifyTokenAndAdmin, async (req, res) => {
 });
 
 //DELETE
-router.delete("/:id", verifyTokenAndAdmin, async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     await Product.findByIdAndDelete(req.params.id);
     res.status(200).json("Product has been deleted...");
@@ -103,9 +103,8 @@ router.get("/", async (req, res) => {
   }
 });
 
-
 router.get("/cart/:ids", async (req, res) => {
-  const ids = req.params.ids.split(',');
+  const ids = req.params.ids.split(",");
   try {
     const products = await Product.find({ _id: { $in: ids } });
     res.status(200).json(products);
@@ -113,7 +112,5 @@ router.get("/cart/:ids", async (req, res) => {
     res.status(500).json(err);
   }
 });
-
-
 
 module.exports = router;
