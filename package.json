@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "nodemon index.js",
+    "gen": "node ./index.js"
   },
+
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -16,7 +18,10 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.0.5",
     "nodemon": "^2.0.12",
-    "stripe": "^8.174.0"
+    "stripe": "^8.174.0",
+    "swagger-autogen": "^2.23.6",
+    "swagger-ui-express": "^5.0.0"
   },
   "description": ""
+  
 }
